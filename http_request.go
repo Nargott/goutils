@@ -11,10 +11,10 @@ import (
 
 const DEFAULT_REQUEST_TIMEOUT = 30
 
-func MakePostRequest(url string, data map[string]interface{}, headers map[string]string) (result map[string]interface{}, err error) {
+func MakePostRequest(url string, data map[string]string, headers map[string]string) (result map[string]interface{}, err error) {
     req := request.NewRequest(new(http.Client))
     req.Client.Timeout = time.Duration(DEFAULT_REQUEST_TIMEOUT * time.Second)
-    req.Json = data
+    req.Data = data
     req.Headers = headers
 
     resp, err := req.Post(url)
