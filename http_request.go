@@ -4,7 +4,6 @@ import (
     "time"
     "github.com/mozillazg/request"
     "fmt"
-    "errors"
     "net/http"
     "encoding/json"
 )
@@ -19,20 +18,20 @@ func MakePostRequest(url string, data map[string]string, headers map[string]stri
 
     resp, err := req.Post(url)
     if err != nil {
-        err = errors.New(fmt.Sprintf("Error POST request (req.Post phrase) to %s, message: %s", url, err.Error()))
+        err = fmt.Errorf("Error POST request (req.Post phrase) to %s, message: %s", url, err.Error())
         return
     }
 
     var content []byte
     content, err = resp.Content()
     if err != nil {
-        err = errors.New(fmt.Sprintf("Error POST request (resp.Content phrase) to %s, message: %s, response: %s", url, err.Error(), string(content)))
+        err = fmt.Errorf("Error POST request (resp.Content phrase) to %s, message: %s, response: %s", url, err.Error(), string(content))
         return
     }
 
     err = json.Unmarshal(content, &result)
     if err != nil {
-        err = errors.New(fmt.Sprintf("Error POST request (json.Unmarshal phrase) to %s, message: %s, response: %s", url, err.Error(), string(content)))
+        err = fmt.Errorf("Error POST request (json.Unmarsha phrase) to %s, message: %s, response: %s", url, err.Error(), string(content))
         return
     }
 
@@ -47,20 +46,46 @@ func MakeGetRequest(url string, data, headers map[string]string) (result map[str
 
     resp, err := req.Get(url)
     if err != nil {
-        err = errors.New(fmt.Sprintf("Error GET request (req.Post phrase) to %s, message: %s", url, err.Error()))
+        err = fmt.Errorf("Error GET request (req.Get phrase) to %s, message: %s", url, err.Error())
         return
     }
 
     var content []byte
     content, err = resp.Content()
     if err != nil {
-        err = errors.New(fmt.Sprintf("Error GET request (resp.Content phrase) to %s, message: %s, response: %s", url, err.Error(), string(content)))
+        err = fmt.Errorf("Error GET request (resp.Content phrase) to %s, message: %s, response: %s", url, err.Error(), string(content))
         return
     }
 
     err = json.Unmarshal(content, &result)
     if err != nil {
-        err = errors.New(fmt.Sprintf("Error GET request (json.Unmarshal phrase) to %s, message: %s, response: %s", url, err.Error(), string(content)))
+        err = fmt.Errorf("Error GET request (json.Unmarshal phrase) to %s, message: %s, response: %s", url, err.Error(), string(content))
+        return
+    }
+
+    return
+}
+
+func MakeGetRequestToTarget(url string) (result interface{}, err error) {
+    req := request.NewRequest(new(http.Client))
+    req.Client.Timeout = time.Duration(DEFAULT_REQUEST_TIMEOUT * time.Second)
+
+    resp, err := req.Get(url)
+    if err != nil {
+        err = fmt.Errorf("Error GET request (req.Get phrase) to %s, message: %s", url, err.Error())
+        return
+    }
+
+    var content []byte
+    content, err = resp.Content()
+    if err != nil {
+        err = fmt.Errorf("Error GET request (resp.Content phrase) to %s, message: %s, response: %s", url, err.Error(), string(content))
+        return
+    }
+
+    err = json.Unmarshal(content, &result)
+    if err != nil {
+        err = fmt.Errorf("Error GET request (json.Unmarshal phrase) to %s, message: %s, response: %s", url, err.Error(), string(content))
         return
     }
 
