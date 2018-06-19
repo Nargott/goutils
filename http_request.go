@@ -66,28 +66,25 @@ func MakeGetRequest(url string, data, headers map[string]string) (result map[str
     return
 }
 
-func MakeGetRequestToTarget(url string) (result interface{}, err error) {
+func MakeGetRequestToTarget(url string, dest *interface{}) error {
     req := request.NewRequest(new(http.Client))
     req.Client.Timeout = time.Duration(DEFAULT_REQUEST_TIMEOUT * time.Second)
 
     resp, err := req.Get(url)
     if err != nil {
-        err = fmt.Errorf("Error GET request (req.Get phrase) to %s, message: %s", url, err.Error())
-        return
+        return fmt.Errorf("Error GET request (req.Get phrase) to %s, message: %s", url, err.Error())
     }
 
     var content []byte
     content, err = resp.Content()
     if err != nil {
-        err = fmt.Errorf("Error GET request (resp.Content phrase) to %s, message: %s, response: %s", url, err.Error(), string(content))
-        return
+        return fmt.Errorf("Error GET request (resp.Content phrase) to %s, message: %s, response: %s", url, err.Error(), string(content))
     }
 
-    err = json.Unmarshal(content, &result)
+    err = json.Unmarshal(content, dest)
     if err != nil {
-        err = fmt.Errorf("Error GET request (json.Unmarshal phrase) to %s, message: %s, response: %s", url, err.Error(), string(content))
-        return
+        return fmt.Errorf("Error GET request (json.Unmarshal phrase) to %s, message: %s, response: %s", url, err.Error(), string(content))
     }
 
-    return
+    return nil
 }
