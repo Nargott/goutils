@@ -66,7 +66,9 @@ func MakeGetRequest(url string, data, headers map[string]string) (result map[str
     return
 }
 
-func MakeGetRequestToTarget(url string, dest *interface{}) error {
+func MakeGetRequestToTarget(url string, dest interface{}) error {
+    var content []byte
+
     req := request.NewRequest(new(http.Client))
     req.Client.Timeout = time.Duration(DEFAULT_REQUEST_TIMEOUT * time.Second)
 
@@ -75,7 +77,7 @@ func MakeGetRequestToTarget(url string, dest *interface{}) error {
         return fmt.Errorf("Error GET request (req.Get phrase) to %s, message: %s", url, err.Error())
     }
 
-    var content []byte
+
     content, err = resp.Content()
     if err != nil {
         return fmt.Errorf("Error GET request (resp.Content phrase) to %s, message: %s, response: %s", url, err.Error(), string(content))
