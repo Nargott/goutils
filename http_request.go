@@ -66,11 +66,12 @@ func MakeGetRequest(url string, data, headers map[string]string) (result map[str
     return
 }
 
-func MakeGetRequestToTarget(url string, dest interface{}) error {
+func MakeGetRequestToTarget(url string, headers map[string]string, dest interface{}) error {
     var content []byte
 
     req := request.NewRequest(new(http.Client))
     req.Client.Timeout = time.Duration(DEFAULT_REQUEST_TIMEOUT * time.Second)
+    req.Headers = headers
 
     resp, err := req.Get(url)
     if err != nil {
