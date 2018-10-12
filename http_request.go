@@ -6,6 +6,7 @@ import (
     "fmt"
     "net/http"
     "encoding/json"
+    "net"
 )
 
 const DEFAULT_REQUEST_TIMEOUT = 30
@@ -114,4 +115,17 @@ func MakePostRequestToTarget(url string, data map[string]string, headers map[str
     }
 
     return nil
+}
+
+func GetClearIpAddress(r *http.Request) (string, error) {
+    ip := r.Header.Get("X-Forwarded-For")
+    if ip == "" {
+        ip = r.RemoteAddr
+    }
+    clearIp, _, err := net.SplitHostPort(ip)
+    if err != nil {
+        return clearIp, fmt.Errorf("can't get clean ip address from string %s, error: %s", ip, err.Error())
+    }
+
+    return clearIp, nil
 }
