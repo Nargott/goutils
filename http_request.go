@@ -125,7 +125,7 @@ func GetClearIpAddress(r *http.Request) string {
     clearIp, _, err := net.SplitHostPort(ip)
     if err != nil {
         //if we cann't to get clear IP, we return as is
-        return clearIp
+        return ip
     }
 
     return clearIp
