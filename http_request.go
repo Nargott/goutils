@@ -117,15 +117,16 @@ func MakePostRequestToTarget(url string, data map[string]string, headers map[str
     return nil
 }
 
-func GetClearIpAddress(r *http.Request) (string, error) {
+func GetClearIpAddress(r *http.Request) string {
     ip := r.Header.Get("X-Forwarded-For")
     if ip == "" {
         ip = r.RemoteAddr
     }
     clearIp, _, err := net.SplitHostPort(ip)
     if err != nil {
-        return clearIp, fmt.Errorf("can't get clean ip address from string %s, error: %s", ip, err.Error())
+        //if we cann't to get clear IP, we return as is
+        return clearIp
     }
 
-    return clearIp, nil
+    return clearIp
 }
