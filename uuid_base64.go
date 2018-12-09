@@ -17,11 +17,11 @@ func UUIDToBase64(su string) (string, error) {
 }
 
 // Base64ToUuid returns unpacked base64-decoded and converted from binary UUID
-func Base64ToUuid(bs string) (uuid.UUID, error) {
+func Base64ToUuid(bs string) (string, error) {
 	b, err := base64.StdEncoding.DecodeString(bs)
 	if err != nil {
-		return uuid.Nil, err
+		return "", err
 	}
 
-	return uuid.FromBytesOrNil(b), nil
+	return uuid.FromBytesOrNil(b).String(), nil
 }

@@ -2,7 +2,6 @@ package goutils
 
 import (
 	"fmt"
-	"github.com/satori/go.uuid"
 	"reflect"
 	"strings"
 	"testing"
@@ -59,27 +58,27 @@ func TestUUIDToBase64(t *testing.T) {
 func TestBase64ToUuid(t *testing.T) {
 	tests := []struct {
 		param       string
-		result      uuid.UUID
+		result      string
 		resultError error
 	}{
 		{
 			param:       "gx4ABCRlR3+ntBFsrIdXmA==",
-			result:      uuid.FromStringOrNil("831e0004-2465-477f-a7b4-116cac875798"),
+			result:      "831e0004-2465-477f-a7b4-116cac875798",
 			resultError: nil,
 		},
 		{
 			param:       "GvCZS2kBSJa++XXrrFXBug==",
-			result:      uuid.FromStringOrNil("1af0994b-6901-4896-bef9-75ebac55c1ba"),
+			result:      "1af0994b-6901-4896-bef9-75ebac55c1ba",
 			resultError: nil,
 		},
 		{
 			param:       "bad base64 value",
-			result:      uuid.Nil,
+			result:      "",
 			resultError: fmt.Errorf("illegal base64 data at input byte 3"),
 		},
 		{
 			param:       "AAAAAAAAAAAAAAAAAAAAAA==", //clean uuid bytes value
-			result:      uuid.Nil,
+			result:      "",
 			resultError: nil,
 		},
 	}
