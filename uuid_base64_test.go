@@ -2,6 +2,7 @@ package goutils
 
 import (
 	"fmt"
+	"github.com/satori/go.uuid"
 	"reflect"
 	"strings"
 	"testing"
@@ -78,7 +79,7 @@ func TestBase64ToUuid(t *testing.T) {
 		},
 		{
 			param:       "AAAAAAAAAAAAAAAAAAAAAA==", //clean uuid bytes value
-			result:      "",
+			result:      uuid.Nil.String(),
 			resultError: nil,
 		},
 	}
