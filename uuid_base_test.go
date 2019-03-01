@@ -186,24 +186,29 @@ func TestBase64ToUuid(t *testing.T) {
 
 func TestUUIDToBase58(t *testing.T) {
 	tests := []struct {
-		param  uuid.UUID
-		result string
+		param       uuid.UUID
+		result      string
+		resultError error
 	}{
 		{
-			param:  uuid.FromStringOrNil("831e0004-2465-477f-a7b4-116cac875798"),
-			result: "HC5Dhcue3bEy1mtfgKtnDM",
+			param:       uuid.FromStringOrNil("831e0004-2465-477f-a7b4-116cac875798"),
+			result:      "HC5Dhcue3bEy1mtfgKtnDM",
+			resultError: nil,
 		},
 		{
-			param:  uuid.FromStringOrNil("1af0994b-6901-4896-bef9-75ebac55c1ba"),
-			result: "4KwqbCxBYHMKS5EzCkY9sX",
+			param:       uuid.FromStringOrNil("1af0994b-6901-4896-bef9-75ebac55c1ba"),
+			result:      "4KwqbCxBYHMKS5EzCkY9sX",
+			resultError: nil,
 		},
 		{
-			param:  uuid.FromStringOrNil("bad uuid"),
-			result: "1111111111111111",
+			param:       uuid.FromStringOrNil("bad uuid"),
+			result:      "1111111111111111",
+			resultError: nil,
 		},
 		{
-			param:  uuid.FromStringOrNil("1af0994bw6901w4896wbef9w75ebac55c1ba"),
-			result: "1111111111111111",
+			param:       uuid.FromStringOrNil("1af0994bw6901w4896wbef9w75ebac55c1ba"),
+			result:      "1111111111111111",
+			resultError: nil,
 		},
 	}
 	for _, tt := range tests {
@@ -216,29 +221,47 @@ func TestUUIDToBase58(t *testing.T) {
 
 func TestBase58ToUuid(t *testing.T) {
 	tests := []struct {
-		param  string
-		result uuid.UUID
+		param       string
+		result      uuid.UUID
+		resultError error
 	}{
 		{
-			param:  "HC5Dhcue3bEy1mtfgKtnDM",
-			result: uuid.FromStringOrNil("831e0004-2465-477f-a7b4-116cac875798"),
+			param:       "HC5Dhcue3bEy1mtfgKtnDM",
+			result:      uuid.FromStringOrNil("831e0004-2465-477f-a7b4-116cac875798"),
+			resultError: nil,
 		},
 		{
-			param:  "4KwqbCxBYHMKS5EzCkY9sX",
-			result: uuid.FromStringOrNil("1af0994b-6901-4896-bef9-75ebac55c1ba"),
+			param:       "4KwqbCxBYHMKS5EzCkY9sX",
+			result:      uuid.FromStringOrNil("1af0994b-6901-4896-bef9-75ebac55c1ba"),
+			resultError: nil,
 		},
 		{
-			param:  "1111111111111111",
-			result: uuid.Nil,
+			param:       "1111111111111111",
+			result:      uuid.Nil,
+			resultError: nil,
 		},
 		{
-			param:  "1231244324234",
-			result: uuid.Nil,
+			param:       "1231244324234",
+			result:      uuid.Nil,
+			resultError: fmt.Errorf("uuid: UUID must be exactly 16 bytes long, got 10 bytes"),
 		},
 	}
 
 	for _, test := range tests {
-		result := Base58ToUuid(test.param)
+		result, err := Base58ToUuid(test.param)
+		if err == nil && test.resultError != nil {
+			t.Errorf("unexpected <nil> error was occured")
+			continue
+		}
+		if err != nil && test.resultError == nil {
+			t.Errorf("unexpected error was occured: %s", err.Error())
+			continue
+		}
+		if err != nil && test.resultError != nil && !strings.EqualFold(err.Error(), test.resultError.Error()) {
+			t.Errorf("unexpected error was occured: %s, when expects: %s", err.Error(), test.resultError.Error())
+			continue
+		}
+
 		if !reflect.DeepEqual(test.result, result) {
 			t.Errorf("received value %s is not equal to expected value: %s", result, test.result)
 		}

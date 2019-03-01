@@ -27,7 +27,12 @@ func Base64ToUuidString(bs string) (string, error) {
 		return "", err
 	}
 
-	return uuid.FromBytesOrNil(b).String(), nil
+	u, err := uuid.FromBytes(b)
+	if err != nil {
+		return "", err
+	}
+
+	return u.String(), nil
 }
 
 // UUIDToBase64 returns packed and Base64-encoded UUID
@@ -43,7 +48,12 @@ func Base64ToUuid(bs string) (uuid.UUID, error) {
 		return uuid.Nil, err
 	}
 
-	return uuid.FromBytesOrNil(b), nil
+	u, err := uuid.FromBytes(b)
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	return u, nil
 }
 
 // UUIDToBase58 returns packed and Base58-encoded UUID
@@ -53,8 +63,13 @@ func UUIDToBase58(u uuid.UUID) string {
 }
 
 // Base58ToUuid returns unpacked base58-decoded and converted from binary UUID
-func Base58ToUuid(bs string) uuid.UUID {
-	return uuid.FromBytesOrNil(base58.Decode(bs))
+func Base58ToUuid(bs string) (uuid.UUID, error) {
+	u, err := uuid.FromBytes(base58.Decode(bs))
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	return u, nil
 }
 
 // UUIDToBase58Check returns packed and Base58-encoded with version UUID
@@ -73,5 +88,10 @@ func Base58CheckToUuid(bs string) (uuid.UUID, error) {
 		return uuid.Nil, fmt.Errorf("bad base58 version %d, when expects %d", v, GoutilsBase58Version)
 	}
 
-	return uuid.FromBytesOrNil(b), nil
+	u, err := uuid.FromBytes(b)
+	if err != nil {
+		return uuid.Nil, err
+	}
+
+	return u, nil
 }
